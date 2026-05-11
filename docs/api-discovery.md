@@ -1,6 +1,6 @@
 # Marker (analytics.marker-zakupki.ru) — карта API
 
-Результаты разведки фронтового API системы «Маркер» (Интерфакс) для проекта по детекции аномалий в коммерческих тендерах. Выполнено 2026-05-03.
+Результаты разведки фронтового API системы «Маркер» (Интерфакс) для проекта по детекции аномалий в коммерческих тендерах
 
 ## Аккаунт
 
@@ -20,7 +20,6 @@
   - `AllowMultilogin`, `ExtendedContent`
   - `MarkerAnalyticsEvent`
 
-> **Безопасность:** аккаунт принадлежит научному руководителю. После завершения работ нужно сменить пароль `fsDP7B3` (он засветился в чатах) и инвалидировать активные сессии.
 
 ## Объём базы
 
@@ -175,41 +174,3 @@ IsLotMultipleCustomers, IsNationalRegime
 `Attachments[i]` = `{Url, FileName, Description, IsPrivate, State, StateDateTime, PrivacyReason}`
 
 URLs ведут на `https://zakupki.gov.ru/223/purchase/public/download/download.html?id=<file_id>` — публичная скачка, **доступ из России без авторизации**, из-за рубежа может быть geo-blocked.
-
-### Что осталось / каверзы
-
-1. `GetSavedRequests.Paging.PageSize` максимум ≈ 100 (200 даёт `Invalid CountPerPage`).
-2. `OrderMode` / `DirectMode` в saved requests — enum типа `Interfax.SM.Entities.Users.SearchRequests.SavedRequests.Additional.SearchSavedRequestsPagingParams+OrderMode` (в JSON оставлять `null` или строкой; численные не работают).
-3. Прямой `SearchRun` (POST) для произвольного фильтра — body шаблон есть в `Data.Request` любого `SearchRunFromTinyUrl` ответа. Можно копировать и модифицировать.
-4. `GetPublicationDocuments`-proxy ожидает строковый `type` (валидные значения: `Lot`/`Purchase`/`Notice` — отвергнуты; нужно ещё подобрать).
-
-### 1. Старая задача: получить тело SearchRun (отменено — есть через tinyUrl)
-
-### 2. Узнать про официальный API («Шлюз Торги»)
-Связаться через `m_help@interfax.ru` и попросить:
-- ссылку на документацию «Шлюз Торги» и «Шлюз Компании» (упоминается в `GetInitData`, LinkHash `Av7` и `O4D`),
-- API-ключ для программного доступа (`WebApi` право у аккаунта уже есть),
-- лимиты по запросам/документам/сутки,
-- условия использования (NDA?).
-
-Это даст официальный, стабильный путь без реверс-инжиниринга и без риска бана за scraping.
-
-### 3. Проверить наличие выгрузки документов публикаций
-Право `GetPublicationDocuments` указывает, что можно скачивать **полные тексты тендерной документации** (TZ, проекты договоров, критерии). Нужно найти соответствующий метод — кандидаты:
-- `FrontLotApi/GetLotEntity` — карточка лота (вероятно, со списком файлов и URL)
-- `FrontUserReportsApi/...Download...` — выгрузка отчётов
-- `FrontSolutionRegionalExportsApi/...Export...` — массовый экспорт
-
-Без идентификатора лота не проверить — он получается из SearchRun.
-
-### 4. Проверить раздел «Нарушения»
-`FrontPurchasesViolationsSearchApi` — это потенциально готовая разметка red flags от Маркера. Если она хорошо ложится на нашу таксономию из EU/OECD, можно использовать как:
-- weak labels для предобучения,
-- benchmark для сравнения (наша модель против правил Маркера).
-
-## Артефакт-файлы
-
-- `.env.example` — шаблон конфигурации
-- `.env` — реальные креды (gitignored)
-- `.gitignore` — исключения для git
-- `.tmp/main.js` — скаченный фронт-бандл (gitignored), для оффлайн-разбора API
