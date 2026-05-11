@@ -1,0 +1,73 @@
+[project]
+name = "tender-anomaly-nlp"
+version = "0.1.0"
+description = "Detection of anomalies and unfair competition in commercial tenders using NLP"
+authors = [{name = "Polina Ryltseva", email = "ryltseva@edu.hse.ru"}]
+requires-python = ">=3.11"
+readme = "README.md"
+
+dependencies = [
+    # HTTP / API
+    "httpx>=0.27",
+    "tenacity>=9.0",
+    "python-dotenv>=1.0",
+    # Parsing
+    "pdfplumber>=0.11",
+    "pymupdf>=1.24",
+    "python-docx>=1.1",
+    # NLP / data
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "scikit-learn>=1.5",
+    "iterative-stratification>=0.1.7",
+    # LLM / embeddings
+    "anthropic>=0.40",
+    "openai>=2.0",
+    "sentence-transformers>=3.0",
+    # Utilities
+    "pydantic>=2.7",
+    "rich>=13.7",
+    "tqdm>=4.66",
+    "click>=8.1",
+    "pyyaml>=6.0",
+    "orjson>=3.10",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "ruff>=0.7",
+    "mypy>=1.13",
+    "ipykernel>=6.29",
+    "jupyter>=1.0",
+]
+ui = [
+    "streamlit>=1.39",
+]
+finetune = [
+    "torch>=2.4",
+    "transformers>=4.45",
+    "peft>=0.13",
+    "accelerate>=1.0",
+    "datasets>=3.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
